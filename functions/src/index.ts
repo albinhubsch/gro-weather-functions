@@ -1,10 +1,14 @@
 import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
+import * as express from 'express';
+import * as cors from 'cors'
+
+const app = express();
 
 // Initiate admin
 admin.initializeApp()
 
-export const postNewMeasurement = functions.https.onRequest( async (request, response) => {
+export const postNewMeasurement = async (request: any, response: any) => {
 
     if(request.method !== "POST"){
         response.status(400).send('Please send a POST request');
@@ -38,9 +42,9 @@ export const postNewMeasurement = functions.https.onRequest( async (request, res
     }
 
     return null
-});
+};
 
-export const getLastMeasure = functions.https.onRequest( async (request, response) => {
+export const getLastMeasure = async (request: any, response: any) => {
 
     if(request.method !== "GET"){
         response.status(400).send('Invalid request type');
@@ -66,9 +70,9 @@ export const getLastMeasure = functions.https.onRequest( async (request, respons
     }
 
     return null
-});
+};
 
-export const getMeasuresFromLastDay = functions.https.onRequest( async (request, response) => {
+export const getMeasuresFromLastDay = async (request: any, response: any) => {
 
     if(request.method !== "GET"){
         response.status(400).send('Invalid request type');
@@ -94,4 +98,15 @@ export const getMeasuresFromLastDay = functions.https.onRequest( async (request,
     }
 
     return null
-});
+};
+
+// Automatically allow cross-origin requests
+app.use(cors({ origin: true }));
+
+// build multiple CRUD interfaces:
+app.post('/postNewMeasurement', postNewMeasurement)
+app.get('/getMeasuresFromLastDay', getMeasuresFromLastDay)
+app.get('/getLastMeasure', getLastMeasure)
+
+// Expose Express API as a single Cloud Function:
+exports.widgets = functions.https.onRequest(app);
