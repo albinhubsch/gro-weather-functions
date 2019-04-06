@@ -109,4 +109,4 @@ app.get('/getMeasuresFromLastDay', getMeasuresFromLastDay)
 app.get('/getLastMeasure', getLastMeasure)
 
 // Expose Express API as a single Cloud Function:
-exports.widgets = functions.https.onRequest(app);
+exports.weather_api = functions.https.onRequest(app);
